@@ -1,0 +1,156 @@
+<html>
+<head>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+	<style>
+		.ta
+			{ font: 8pt calibri;
+			background-color: whitesmoke;
+			border: 1px solid silver; }
+	</style>
+</head>
+<body>
+<div>
+    <input type="textarea" id="inputTA" class="ta" value="a@b.c,a@b.c,a@" />
+</div>
+<script type="text/javascript">
+(function EmailAddressArea(taID, sep) {
+    //initialize globals
+    var validEmails = [], invalidEmails = [], tao, taoName, ta, pta, eac, tc, tac;
+    //seperators
+    if(!sep) sep =[',',';','\r','\n',' '];
+        
+    //get place holder TextArea element
+    tao = $('#'+taID);
+    taoName = tao.attr('name');
+    pta = tao.parent();
+    tao.attr('id',taID+'_changedByEmailAddressArea').attr('name',taoName+'_changedByEmailAddressArea');
+    //add holder DIVs
+    ta = $('<input type="textarea" id="'+taID+'" name="'+taoName+'" />');
+    tc = $('<div id="eaTags" />');
+    eac = $('<div id="eacontainer" />');
+    pta.append(eac);
+    eac.append(tc).append(ta);
+    
+    //attach after event handlers for keyup/press, paste
+    ta.on('keypress',function(e){
+        //look for comma, space, enter, semicolon
+        var char = String.fromCharCode(e.which);
+        if($.inArray(char,sep)>=0)
+            process(ta.val());
+    });
+    ta.on('paste', function(e) {
+        var ctl = $(this);
+        setTimeout(function() {
+            process(ctl.val())
+        }, 100);
+    });    
+    //attach on focus for holder to ta
+    eac.on('click',function(){ ta.focus() });
+   
+    function process(str) {
+        //clean str, replace separators with comma, remove space
+        $(sep).each(function(){str=str.replace(new RegExp(this,"g"),',')});
+        //split to array on comma or seperator parameter
+        //for each item in array see if valid email and add tag if yes
+        str.split(',').forEach(function(str){
+            if(isValidEmail(str)) { //if valid, check if already added
+                if($.inArray(str,validEmails)<0) // if not add a tag
+                    addTag(str);
+                else {// if yes, add new and remove old
+                    removeTag(str);
+                    addTag(str);                    
+                }
+            }
+            //add to invalid emails array
+            else
+                if($.inArray(str,invalidEmails)<0)
+                    invalidEmails.push(str);
+        });        
+        //format the invalid emails to a string adding spaces
+        //set invalid emails as text for ta
+        ta.val(invalidEmails.join(', '));
+        invalidEmails = [];
+    };
+    //resize ta
+    function resizeTa() {
+        ta.css('width',1);
+        var cw = eac.width();
+        var l = ta.position().left;
+        ta.css('width',cw-l);
+    };
+    //function add tag
+    function addTag(email) {
+        validEmails.push(email);
+        var i = $.inArray(email, validEmails);
+        if(validEmails.length==1)tc.css('display','inline');
+        var btn = $('<div>-</div>').css(cssBtn).click(close);
+        var tag = $('<div id="tag'+i+'">').text(email).css(cssTag).append(btn)
+        tc.append(tag);
+        resizeTa();
+    };
+    //function remove tag
+    function removeTag(email) {
+        var i = $.inArray(email, validEmails);
+        validEmails.pop(email);
+        $('div#tag'+i).remove();
+        if(validEmails.length==0)tc.css('display','none');
+        resizeTa();
+    };
+    //close tag
+    function close() {
+        var t = $(this).parent();
+        removeTag(t.text().slice(0,-1),true);        
+    }
+    //styles
+    var cssTa = {
+            cssText: 'background: transparent !important',
+            display: 'inline',
+            '-webkit-box-shadow': 'none',
+            'box-shadow': 'none',            
+            outline: 0,
+            border: 0
+        },
+        cssTc = {
+            display: 'none'
+        },
+        cssTag = {
+            'background-color': 'yellowgreen',
+            padding: '3px 3px 3px 7px',
+            'border-radius': '5px',
+            color: 'white',
+            margin: '3px',
+            display: 'inline-block'
+        },
+        cssBtn = {
+            display: 'inline-block',
+            'background-color': 'green',
+            color: 'white',
+            width: '15px',
+            height: '15px',
+            'border-radius': '10px',
+            'text-align': 'center',
+            'line-height': '15px',
+            'margin-left': '5px',
+            cursor: 'pointer'
+        };    
+    //set styles
+    //copy styles from tao to eac
+    eac.attr('class',tao.attr('class'));
+    eac.attr('style',tao.attr('style'));
+    //hide original tao
+    tao.hide();    
+    //set rest
+    ta.css(cssTa);
+    tc.css(cssTc);
+    
+	//Credits:
+    //isValidEmail():- aSeptik [http://stackoverflow.com/a/2855946/82961]
+    //Feel free to implement your own
+    function isValidEmail(str) {
+        var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
+        return pattern.test(str);
+    };
+})("inputTA");
+</script>
+</body>
+</html>
