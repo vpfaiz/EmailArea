@@ -13,33 +13,36 @@
 <body>
 	<input type="textarea" id="inputTA" name="inputTA" class="ta" />
 <script type="text/javascript">
-emailArea($("#inputTA"),[',',';',' ']);
+
+emailArea($("#inputTA"), [',', ';', ' ']);
 
 function emailArea(tao, sep) {
     //initialize globals
     var validEmails = [], invalidEmails = [], taID, taName, ta, pta, eac, tc, tac;
     //seperators
-    if(!sep) sep =[',',';','\r','\n',' '];
+    sep = sep || [',', ';', '\r', '\n', ' '];
         
-    //get place holder TextArea element
-    taID = tao.attr('id');
+    // Get place holder TextArea element
+    taID   = tao.attr('id');
     taName = tao.attr('name');
-    pta = tao.parent();
-    tao.attr('id',taID+'_changedByEmailArea').attr('name',taName+'_changedByEmailArea');
-    //add holder DIVs
-    ta = $('<input type="textarea" id="'+taID+'" name="'+taName+'" />');
-    tc = $('<div id="eaTags" />');
+    pta    = tao.parent();
+    tao.attr('id', taID + '_changedByEmailArea').attr('name', taName + '_changedByEmailArea');
+    
+    // Add holder DIVs
+    ta  = $('<input type="textarea" id="' + taID + '" name="' + taName + '" />');
+    tc  = $('<div id="eaTags" />');
     eac = $('<div id="eacontainer" />');
     pta.append(eac);
     eac.append(tc).append(ta);
     
     //attach after event handlers for keyup/press, paste
-    ta.on('keypress',function(e){
+    ta.on('keypress', function(e){
         //look for comma, space, enter, semicolon
         var char = String.fromCharCode(e.which);
-        if($.inArray(char,sep)>=0)
+        if($.inArray(char,sep) >= 0)
             process(ta.val());
     });
+    
     ta.on('paste', function(e) {
         var ctl = $(this);
         setTimeout(function() {
@@ -47,16 +50,16 @@ function emailArea(tao, sep) {
         }, 100);
     });    
     //attach on focus for holder to ta
-    eac.on('click',function(){ ta.focus() });
+    eac.on('click', function(){ ta.focus() });
    
     function process(str) {
-        //clean str, replace separators with comma, remove space
+        // Clean str, replace separators with comma, remove space
         $(sep).each(function(){str=str.replace(new RegExp(this,"g"),',')});
-        //split to array on comma or seperator parameter
-        //for each item in array see if valid email and add tag if yes
+        // Split to array on comma or seperator parameter
+        // for each item in array see if valid email and add tag if yes
         str.split(',').forEach(function(str){
             if(isValidEmail(str)) { //if valid, check if already added
-                if($.inArray(str,validEmails)<0) // if not add a tag
+                if($.inArray(str,validEmails) < 0) // if not add a tag
                     addTag(str);
                 else {// if yes, add new and remove old
                     removeTag(str);
@@ -75,16 +78,16 @@ function emailArea(tao, sep) {
     };
     //resize ta
     function resizeTa() {
-        ta.css('width',1);
+        ta.css('width', 1);
         var cw = eac.width();
-        var l = ta.position().left;
-        ta.css('width',cw-l);
+        var l  = ta.position().left;
+        ta.css('width', cw-l);
     };
     //function add tag
     function addTag(email) {
         validEmails.push(email);
         var i = $.inArray(email, validEmails);
-        if(validEmails.length==1)tc.css('display','inline');
+        if(validEmails.length === 1)tc.css('display', 'inline');
         var btn = $('<div>-</div>').css(cssBtn).click(close);
         var tag = $('<div id="tag'+i+'">').text(email).css(cssTag).append(btn)
         tc.append(tag);
@@ -94,14 +97,14 @@ function emailArea(tao, sep) {
     function removeTag(email) {
         var i = $.inArray(email, validEmails);
         validEmails.pop(email);
-        $('div#tag'+i).remove();
-        if(validEmails.length==0)tc.css('display','none');
+        $('div#tag' + i).remove();
+        if(validEmails.length === 0)tc.css('display','none');
         resizeTa();
     };
     //close tag
     function close() {
         var t = $(this).parent();
-        removeTag(t.text().slice(0,-1),true);        
+        removeTag(t.text().slice(0,-1), true);        
     }
     //styles
     var cssTa = {
