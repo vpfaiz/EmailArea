@@ -15,7 +15,7 @@ HTML/Javascript/CSS is not my primary field. This is something that I created as
 Usage
 -----
 ```JavaScript
-emailArea("textAreaID", [",",";"]);
+emailArea($("#textAreaID"), [',',';',' ']);
 ```
 1. First parameter is the ID of the TextArea that you want to convert to EmailArea
 2. Second optional parameter is the array of separators that you want to use to separate email addresses as you type in. The default set is ``` [',',';','\r','\n',' '] ```.
