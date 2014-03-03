@@ -8,6 +8,8 @@ Converts email addresses in your Text Area to email tags after validation.
 
 Web visitors can either type in the emails or paste a large list. You can configure delimiters (, ; \n) for separating emails.
 
+###[Demo] (http://jsfiddle.net/vpfaiz/pD49Q/)
+
 Note
 ----
 HTML/Javascript/CSS is not my primary field. This is something that I created as part of a project. Thought of sharing it with you.. Will be willing to learn from you Gurus out there but please do not expect high quality stuff here. I have done some fair testing on this but use it on your own risk... :)
