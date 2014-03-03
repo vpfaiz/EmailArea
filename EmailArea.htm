@@ -79,7 +79,7 @@ function emailArea(tao, sep) {
     function resizeTa() {
         ta.css('width', 50);
         var cw = eac.width();
-        var l  = ta.position().left;console.log(l,cw);
+        var l  = ta.position().left;
         ta.css('width', cw-l-20);// 20 if scroll bars appear
         eac.animate({ scrollTop: eac[0].scrollHeight}, 1);
     };
