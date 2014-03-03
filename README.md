@@ -24,5 +24,5 @@ emailArea($("#textAreaID"), [',',';',' ']);
 
 Useful information
 ------------------
-- Your TextArea's ID and name will be changed, item will be hidden ($.hide) and a new text area with same ID and name will be created for use in forms. The control will also copy styles from your TextArea item (most of them).
+- Your TextArea will be hidden and replaced by EmailArea control in UI but the good emails list (CSV) will be set on your TextArea itself. The EmailArea control will also copy styles from your TextArea item (most of them).
 - It uses a code (function isValidEmail) from SO user **aSeptik (http://stackoverflow.com/a/2855946/82961)** for email validation. You may want to change this with your own function (even change it to validate something other than email)
