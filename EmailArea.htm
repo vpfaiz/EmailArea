@@ -11,38 +11,35 @@
 	</style>
 </head>
 <body>
-	<input type="textarea" id="inputTA" name="inputTA" class="ta" />
+	<textarea id="inputTA" name="inputTA" class="ta" rows="3" /></textarea>
+	<input type="Button" id="btn" value="Convert" />
 <script type="text/javascript">
-
-emailArea($("#inputTA"), [',', ';', ' ']);
+$('#btn').click(function(){
+    emailArea($('#inputTA'), [',',';',' ']);
+    $(this).hide();
+});
 
 function emailArea(tao, sep) {
-    //initialize globals
-    var validEmails = [], invalidEmails = [], taID, taName, ta, pta, eac, tc, tac;
-    //seperators
+    // Initialize globals
+    var validEmails = [], invalidEmails = [], ta, pta, eac, tc, tac;
+    
+    // Seperators
     sep = sep || [',', ';', '\r', '\n', ' '];
-        
-    // Get place holder TextArea element
-    taID   = tao.attr('id');
-    taName = tao.attr('name');
-    pta    = tao.parent();
-    tao.attr('id', taID + '_changedByEmailArea').attr('name', taName + '_changedByEmailArea');
     
     // Add holder DIVs
-    ta  = $('<input type="textarea" id="' + taID + '" name="' + taName + '" />');
+    ta  = $('<input type="text" id="' + tao.attr('id') + '_EmailArea" />');
     tc  = $('<div id="eaTags" />');
-    eac = $('<div id="eacontainer" />');
-    pta.append(eac);
+    eac = $('<div id="eaContainer" />');
+    tao.after(eac);
     eac.append(tc).append(ta);
     
-    //attach after event handlers for keyup/press, paste
+    // Attach after event handlers for keyup/press, paste
     ta.on('keypress', function(e){
-        //look for comma, space, enter, semicolon
+        // Look for comma, space, enter, semicolon as given in sep
         var char = String.fromCharCode(e.which);
         if($.inArray(char,sep) >= 0)
             process(ta.val());
-    });
-    
+    });    
     ta.on('paste', function(e) {
         var ctl = $(this);
         setTimeout(function() {
@@ -54,36 +51,39 @@ function emailArea(tao, sep) {
    
     function process(str) {
         // Clean str, replace separators with comma, remove space
-        $(sep).each(function(){str=str.replace(new RegExp(this,"g"),',')});
+        $(sep).each(function(){ str = str.replace(new RegExp(this,"g"),',').replace(/,+/g,',') });
         // Split to array on comma or seperator parameter
-        // for each item in array see if valid email and add tag if yes
+        // For each item in array see if valid email and add tag if yes
         str.split(',').forEach(function(str){
-            if(isValidEmail(str)) { //if valid, check if already added
-                if($.inArray(str,validEmails) < 0) // if not add a tag
+            if(isValidEmail(str)) { // If valid, check if already added
+                if($.inArray(str,validEmails) < 0) // If not add a tag
                     addTag(str);
-                else {// if yes, add new and remove old
+                else {// If yes, add new and remove old
                     removeTag(str);
                     addTag(str);                    
                 }
             }
-            //add to invalid emails array
+            // Add to invalid emails array
             else
                 if($.inArray(str,invalidEmails)<0)
                     invalidEmails.push(str);
         });        
-        //format the invalid emails to a string adding spaces
-        //set invalid emails as text for ta
+        // Set tao with good emails
+        tao.val(validEmails.join(','));
+        // Format the invalid emails to a string adding spaces
+        // Set invalid emails as text for ta
         ta.val(invalidEmails.join(', '));
         invalidEmails = [];
     };
-    //resize ta
+    // Resize ta
     function resizeTa() {
-        ta.css('width', 1);
+        ta.css('width', 50);
         var cw = eac.width();
-        var l  = ta.position().left;
-        ta.css('width', cw-l);
+        var l  = ta.position().left;console.log(l,cw);
+        ta.css('width', cw-l-20);// 20 if scroll bars appear
+        eac.animate({ scrollTop: eac[0].scrollHeight}, 1);
     };
-    //function add tag
+    // Add tag
     function addTag(email) {
         validEmails.push(email);
         var i = $.inArray(email, validEmails);
@@ -93,7 +93,7 @@ function emailArea(tao, sep) {
         tc.append(tag);
         resizeTa();
     };
-    //function remove tag
+    // Remove tag
     function removeTag(email) {
         var i = $.inArray(email, validEmails);
         validEmails.pop(email);
@@ -101,12 +101,12 @@ function emailArea(tao, sep) {
         if(validEmails.length === 0)tc.css('display','none');
         resizeTa();
     };
-    //close tag
+    // Close tag
     function close() {
         var t = $(this).parent();
         removeTag(t.text().slice(0,-1), true);        
     }
-    //styles
+    // Styles
     var cssTa = {
             cssText: 'background: transparent !important',
             display: 'inline',
@@ -138,18 +138,19 @@ function emailArea(tao, sep) {
             'margin-left': '5px',
             cursor: 'pointer'
         };    
-    //set styles
-    //copy styles from tao to eac
+    // Set styles
+    // Copy styles from tao to eac
     eac.attr('class',tao.attr('class'));
     eac.attr('style',tao.attr('style'));
-    //hide original tao
-    tao.hide();    
-    //set rest
+    eac.css('overflow','auto');
+    // Hide original tao
+    tao.hide();
+    // Set rest
     ta.css(cssTa);
     tc.css(cssTc);
     
-    //isValidEmail():- Courtesy: aSeptik [http://stackoverflow.com/a/2855946/82961]
-    //Feel free to implement your own
+    // isValidEmail() - Courtesy: aSeptik [http://stackoverflow.com/a/2855946/82961]
+    // Feel free to implement your own
     function isValidEmail(str) {
         var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
         return pattern.test(str);
