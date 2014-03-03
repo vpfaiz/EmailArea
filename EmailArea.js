@@ -1,33 +1,12 @@
-<html>
-<head>
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-	<style>
-		.ta {
-			font: 8pt calibri;
-			background-color: whitesmoke;
-			border: 1px solid silver;
-			width: 400px
-		}
-	</style>
-</head>
-<body>
-	<textarea id="inputTA" name="inputTA" class="ta" rows="3" /></textarea>
-	<input type="Button" id="btn" value="Convert" />
-<script type="text/javascript">
-$('#btn').click(function(){
-    emailArea($('#inputTA'), [',',';',' ']);
-    $(this).hide();
-});
-
 function emailArea(tao, sep) {
     // Initialize globals
-    var validEmails = [], invalidEmails = [], ta, pta, eac, tc, tac;
+    var validEmails = [], invalidEmails = [], ta, pta, eac, tc, tac, cn = 'EmailArea';
     
     // Seperators
     sep = sep || [',', ';', '\r', '\n', ' '];
     
     // Add holder DIVs
-    ta  = $('<input type="text" id="' + tao.attr('id') + '_EmailArea" />');
+    ta  = $('<input type="text" id="' + tao.attr('id') + '_'+cn+'" />');
     tc  = $('<div id="eaTags" />');
     eac = $('<div id="eaContainer" />');
     tao.after(eac);
@@ -79,8 +58,10 @@ function emailArea(tao, sep) {
     function resizeTa() {
         ta.css('width', 50);
         var cw = eac.width();
-        var l  = ta.position().left;
-        ta.css('width', cw-l-20);// 20 if scroll bars appear
+        var nw, l = ta.offset().left - eac.offset().left;
+        nw = cw - l - 20;// 20 if scroll bars appear
+        nw = nw<50?50:nw;// Set minimum width
+        ta.css('width', nw); console.log(l, cw, nw);
         eac.animate({ scrollTop: eac[0].scrollHeight}, 1);
     };
     // Add tag
@@ -88,8 +69,8 @@ function emailArea(tao, sep) {
         validEmails.push(email);
         var i = $.inArray(email, validEmails);
         if(validEmails.length === 1)tc.css('display', 'inline');
-        var btn = $('<div>-</div>').css(cssBtn).click(close);
-        var tag = $('<div id="tag'+i+'">').text(email).css(cssTag).append(btn)
+        var btn = $('<div>-</div>').attr('class',cn+'Btn').click(close);
+        var tag = $('<div id="tag'+i+'">').text(email).attr('class',cn+'Tag').append(btn)
         tc.append(tag);
         resizeTa();
     };
@@ -113,41 +94,25 @@ function emailArea(tao, sep) {
             '-webkit-box-shadow': 'none',
             'box-shadow': 'none',            
             outline: 0,
-            border: 0
-        },
-        cssTc = {
-            display: 'none'
-        },
-        cssTag = {
-            'background-color': 'yellowgreen',
-            padding: '3px 3px 3px 7px',
-            'border-radius': '5px',
-            color: 'white',
-            margin: '3px',
-            display: 'inline-block'
-        },
-        cssBtn = {
-            display: 'inline-block',
-            'background-color': 'green',
-            color: 'white',
-            width: '15px',
-            height: '15px',
-            'border-radius': '10px',
-            'text-align': 'center',
-            'line-height': '15px',
-            'margin-left': '5px',
-            cursor: 'pointer'
+            border: 0,
+            resize: 'none'
         };    
     // Set styles
     // Copy styles from tao to eac
-    eac.attr('class',tao.attr('class'));
-    eac.attr('style',tao.attr('style'));
-    eac.css('overflow','auto');
+    eac.attr('class', tao.attr('class'));
+    eac.attr('style', tao.attr('style'));
+    eac.css('background', tao.css('background'));
+    eac.css('border', tao.css('border'));
+    eac.css('width', tao.css('width'));
+    eac.css('height', tao.css('height'));
+    //eac.css('cssText', tao.css('cssText')); << This copies more than what we needs
+    eac.addClass(cn + 'Container').css('overflow', 'auto');
+
     // Hide original tao
     tao.hide();
-    // Set rest
+    // Set class for other items
     ta.css(cssTa);
-    tc.css(cssTc);
+    tc.css('display', 'none');
     
     // isValidEmail() - Courtesy: aSeptik [http://stackoverflow.com/a/2855946/82961]
     // Feel free to implement your own
@@ -156,6 +121,3 @@ function emailArea(tao, sep) {
         return pattern.test(str);
     };
 }
-</script>
-</body>
-</html>

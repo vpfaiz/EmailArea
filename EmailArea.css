@@ -1,0 +1,23 @@
+﻿.EmailAreaContainer #Emails_EmailAreaContainer {
+    /* Place any additional styles you want here apart from the ones copied from TextArea element */
+}
+.EmailAreaTag {
+    background-color: slategray;
+    padding: 3px 3px 3px 7px;
+    border-radius: 5px;
+    color: white;
+    margin: 3px;
+    display: inline-block
+}
+.EmailAreaBtn {
+    color: white !important;
+    display: inline-block;
+    background-color: #b0b0b0;            
+    width: 15px;
+    height: 15px;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 15px;
+    margin-left: 5px;
+    cursor: pointer
+}
