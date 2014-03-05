@@ -121,7 +121,14 @@ function emailArea(tao, sep) {
         return pattern.test(str);
     };
 }
+
+
 $(document).ready(function(){
+	
+	/**
+	 * adding double click event listener to added email tags 
+	 * upon double click, remove tag and bring it to edit section
+	 */
 	$("body").on("dblclick",".EmailAreaTag",function(){
 		var email = $(this).html().replace('<div class="EmailAreaBtn">x</div>','');
 		$(this).children(".EmailAreaBtn").click();
