@@ -61,7 +61,7 @@ function emailArea(tao, sep) {
         var nw, l = ta.offset().left - eac.offset().left;
         nw = cw - l - 20;// 20 if scroll bars appear
         nw = nw<50?50:nw;// Set minimum width
-        ta.css('width', nw); console.log(l, cw, nw);
+        ta.css('width', nw);
         eac.animate({ scrollTop: eac[0].scrollHeight}, 1);
     };
     // Add tag
@@ -69,7 +69,7 @@ function emailArea(tao, sep) {
         validEmails.push(email);
         var i = $.inArray(email, validEmails);
         if(validEmails.length === 1)tc.css('display', 'inline');
-        var btn = $('<div>-</div>').attr('class',cn+'Btn').click(close);
+        var btn = $('<div>x</div>').attr('class',cn+'Btn').click(close);
         var tag = $('<div id="tag'+i+'">').text(email).attr('class',cn+'Tag').append(btn)
         tc.append(tag);
         resizeTa();
@@ -121,3 +121,10 @@ function emailArea(tao, sep) {
         return pattern.test(str);
     };
 }
+$(document).ready(function(){
+	$("body").on("dblclick",".EmailAreaTag",function(){
+		var email = $(this).html().replace('<div class="EmailAreaBtn">x</div>','');
+		$(this).children(".EmailAreaBtn").click();
+		$("#inputTA_EmailArea").val(email);	
+	});
+});
