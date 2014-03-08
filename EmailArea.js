@@ -90,9 +90,9 @@ function emailArea(tao, sep) {
 
         // On DoubleClick bring back the email as editable
         tag.dblclick(function() {
-            var email = $(this).html().replace('<div class="EmailAreaBtn">x</div>', '');
-            $(this).children(".EmailAreaBtn").click();
-            $("#inputTA_EmailArea").val(email);
+            var email = $(this).data('email');
+            removeTag(email);
+            ta.val(email);
         });
 
         tc.append(tag);
