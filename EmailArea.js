@@ -30,7 +30,7 @@ function emailArea(tao, sep) {
         }, 100);
     });
 
-    //attach on focus for holder to ta
+    // attach on focus for holder to ta
     eac.on('click', function() {
         ta.focus();
     });
@@ -83,7 +83,18 @@ function emailArea(tao, sep) {
         var i = $.inArray(email, validEmails);
         if (validEmails.length === 1) tc.css('display', 'inline');
         var btn = $('<div>x</div>').attr('class', cn + 'Btn').click(close);
-        var tag = $('<div id="tag' + i + '">').text(email).attr('class', cn + 'Tag').append(btn);
+        var tag = $('<div id="tag' + i + '">').
+                        text(email).attr('class', cn + 'Tag').
+                        data('email', email).
+                        append(btn);
+
+        // On DoubleClick bring back the email as editable
+        tag.dblclick(function() {
+            var email = $(this).html().replace('<div class="EmailAreaBtn">x</div>', '');
+            $(this).children(".EmailAreaBtn").click();
+            $("#inputTA_EmailArea").val(email);
+        });
+
         tc.append(tag);
         resizeTa();
     };
@@ -109,9 +120,9 @@ function emailArea(tao, sep) {
         display : 'inline',
         outline : 0,
         border  : 0,
-        resize  : 'none'
+        resize  : 'none',
         '-webkit-box-shadow': 'none',
-        'box-shadow': 'none',
+        'box-shadow': 'none'
     };
 
     // Set styles
@@ -138,17 +149,3 @@ function emailArea(tao, sep) {
         return pattern.test(str);
     };
 }
-
-
-$(document).ready(function() {
-
-    /**
-     * adding double click event listener to added email tags
-     * upon double click, remove tag and bring it to edit section
-     */
-    $("body").on("dblclick", ".EmailAreaTag", function() {
-        var email = $(this).html().replace('<div class="EmailAreaBtn">x</div>', '');
-        $(this).children(".EmailAreaBtn").click();
-        $("#inputTA_EmailArea").val(email);
-    });
-});
