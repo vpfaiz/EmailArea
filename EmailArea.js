@@ -1,52 +1,58 @@
 function emailArea(tao, sep) {
     // Initialize globals
-    var validEmails = [], invalidEmails = [], ta, pta, eac, tc, tac, cn = 'EmailArea';
-    
+    var validEmails = [],
+        invalidEmails = [],
+        ta, pta, eac, tc, tac, cn = 'EmailArea';
+
     // Seperators
     sep = sep || [',', ';', '\r', '\n', ' '];
-    
+
     // Add holder DIVs
-    ta  = $('<input type="text" id="' + tao.attr('id') + '_'+cn+'" />');
-    tc  = $('<div id="eaTags" />');
+    ta = $('<input type="text" id="' + tao.attr('id') + '_' + cn + '" />');
+    tc = $('<div id="eaTags" />');
     eac = $('<div id="eaContainer" />');
     tao.after(eac);
     eac.append(tc).append(ta);
-    
+
     // Attach after event handlers for keyup/press, paste
-    ta.on('keypress', function(e){
+    ta.on('keypress', function(e) {
         // Look for comma, space, enter, semicolon as given in sep
         var char = String.fromCharCode(e.which);
-        if($.inArray(char,sep) >= 0)
+        if ($.inArray(char, sep) >= 0)
             process(ta.val());
-    });    
+    });
     ta.on('paste', function(e) {
         var ctl = $(this);
         setTimeout(function() {
             process(ctl.val())
         }, 100);
-    });    
+    });
     //attach on focus for holder to ta
-    eac.on('click', function(){ ta.focus() });
-   
+    eac.on('click', function() {
+        ta.focus()
+    });
+
     function process(str) {
         // Clean str, replace separators with comma, remove space
-        $(sep).each(function(){ str = str.replace(new RegExp(this,"g"),',').replace(/,+/g,',') });
+        $(sep).each(function() {
+            str = str.replace(new RegExp(this, "g"), ',').replace(/,+/g, ',')
+        });
         // Split to array on comma or seperator parameter
         // For each item in array see if valid email and add tag if yes
-        str.split(',').forEach(function(str){
-            if(isValidEmail(str)) { // If valid, check if already added
-                if($.inArray(str,validEmails) < 0) // If not add a tag
+        str.split(',').forEach(function(str) {
+            if (isValidEmail(str)) { // If valid, check if already added
+                if ($.inArray(str, validEmails) < 0) // If not add a tag
                     addTag(str);
-                else {// If yes, add new and remove old
+                else { // If yes, add new and remove old
                     removeTag(str);
-                    addTag(str);                    
+                    addTag(str);
                 }
             }
             // Add to invalid emails array
             else
-                if($.inArray(str,invalidEmails)<0)
-                    invalidEmails.push(str);
-        });        
+            if ($.inArray(str, invalidEmails) < 0)
+                invalidEmails.push(str);
+        });
         // Set tao with good emails
         tao.val(validEmails.join(','));
         // Format the invalid emails to a string adding spaces
@@ -59,18 +65,20 @@ function emailArea(tao, sep) {
         ta.css('width', 50);
         var cw = eac.width();
         var nw, l = ta.offset().left - eac.offset().left;
-        nw = cw - l - 20;// 20 if scroll bars appear
-        nw = nw<50?50:nw;// Set minimum width
+        nw = cw - l - 20; // 20 if scroll bars appear
+        nw = nw < 50 ? 50 : nw; // Set minimum width
         ta.css('width', nw);
-        eac.animate({ scrollTop: eac[0].scrollHeight}, 1);
+        eac.animate({
+            scrollTop: eac[0].scrollHeight
+        }, 1);
     };
     // Add tag
     function addTag(email) {
         validEmails.push(email);
         var i = $.inArray(email, validEmails);
-        if(validEmails.length === 1)tc.css('display', 'inline');
-        var btn = $('<div>x</div>').attr('class',cn+'Btn').click(close);
-        var tag = $('<div id="tag'+i+'">').text(email).attr('class',cn+'Tag').append(btn)
+        if (validEmails.length === 1) tc.css('display', 'inline');
+        var btn = $('<div>x</div>').attr('class', cn + 'Btn').click(close);
+        var tag = $('<div id="tag' + i + '">').text(email).attr('class', cn + 'Tag').append(btn)
         tc.append(tag);
         resizeTa();
     };
@@ -79,24 +87,24 @@ function emailArea(tao, sep) {
         var i = $.inArray(email, validEmails);
         validEmails.pop(email);
         $('div#tag' + i).remove();
-        if(validEmails.length === 0)tc.css('display','none');
+        if (validEmails.length === 0) tc.css('display', 'none');
         resizeTa();
     };
     // Close tag
     function close() {
         var t = $(this).parent();
-        removeTag(t.text().slice(0,-1), true);        
+        removeTag(t.text().slice(0, -1), true);
     }
     // Styles
     var cssTa = {
-            cssText: 'background: transparent !important',
-            display: 'inline',
-            '-webkit-box-shadow': 'none',
-            'box-shadow': 'none',            
-            outline: 0,
-            border: 0,
-            resize: 'none'
-        };    
+        cssText: 'background: transparent !important',
+        display: 'inline',
+        '-webkit-box-shadow': 'none',
+        'box-shadow': 'none',
+        outline: 0,
+        border: 0,
+        resize: 'none'
+    };
     // Set styles
     // Copy styles from tao to eac
     eac.attr('class', tao.attr('class'));
@@ -113,7 +121,7 @@ function emailArea(tao, sep) {
     // Set class for other items
     ta.css(cssTa);
     tc.css('display', 'none');
-    
+
     // isValidEmail() - Courtesy: aSeptik [http://stackoverflow.com/a/2855946/82961]
     // Feel free to implement your own
     function isValidEmail(str) {
@@ -123,15 +131,15 @@ function emailArea(tao, sep) {
 }
 
 
-$(document).ready(function(){
-	
-	/**
-	 * adding double click event listener to added email tags 
-	 * upon double click, remove tag and bring it to edit section
-	 */
-	$("body").on("dblclick",".EmailAreaTag",function(){
-		var email = $(this).html().replace('<div class="EmailAreaBtn">x</div>','');
-		$(this).children(".EmailAreaBtn").click();
-		$("#inputTA_EmailArea").val(email);	
-	});
+$(document).ready(function() {
+
+    /**
+     * adding double click event listener to added email tags
+     * upon double click, remove tag and bring it to edit section
+     */
+    $("body").on("dblclick", ".EmailAreaTag", function() {
+        var email = $(this).html().replace('<div class="EmailAreaBtn">x</div>', '');
+        $(this).children(".EmailAreaBtn").click();
+        $("#inputTA_EmailArea").val(email);
+    });
 });
