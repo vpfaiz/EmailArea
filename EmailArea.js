@@ -24,9 +24,9 @@ function emailArea(tao, sep) {
     });
 
     ta.on('paste', function() {
-        var ctl = $(this);
+        var text = $(this).val();
         setTimeout(function() {
-            process(ctl.val());
+            process(text);
         }, 100);
     });
 
@@ -62,7 +62,7 @@ function emailArea(tao, sep) {
         // Set invalid emails as text for ta
         ta.val(invalidEmails.join(', '));
         invalidEmails = [];
-    };
+    }
 
     // Resize ta
     function resizeTa() {
@@ -75,7 +75,7 @@ function emailArea(tao, sep) {
         eac.animate({
             scrollTop: eac[0].scrollHeight
         }, 1);
-    };
+    }
 
     // Add tag
     function addTag(email) {
@@ -97,7 +97,7 @@ function emailArea(tao, sep) {
 
         tc.append(tag);
         resizeTa();
-    };
+    }
 
     // Remove tag
     function removeTag(email) {
@@ -106,7 +106,7 @@ function emailArea(tao, sep) {
         $('div#tag' + i).remove();
         if (validEmails.length === 0) tc.css('display', 'none');
         resizeTa();
-    };
+    }
 
     // Close tag
     function close() {
@@ -129,11 +129,14 @@ function emailArea(tao, sep) {
     // Copy styles from tao to eac
     eac.attr('class', tao.attr('class'));
     eac.attr('style', tao.attr('style'));
-    eac.css('background', tao.css('background'));
-    eac.css('border', tao.css('border'));
-    eac.css('width', tao.css('width'));
-    eac.css('height', tao.css('height'));
-    //eac.css('cssText', tao.css('cssText')); << This copies more than what we needs
+
+    eac.css({
+        'background' : tao.css('background'),
+        'border'     : tao.css('border'),
+        'width'      : tao.css('width'),
+        'height'     : tao.css('height')
+    });
+
     eac.addClass(cn + 'Container').css('overflow', 'auto');
 
     // Hide original tao
@@ -147,5 +150,5 @@ function emailArea(tao, sep) {
     function isValidEmail(str) {
         var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
         return pattern.test(str);
-    };
+    }
 }
