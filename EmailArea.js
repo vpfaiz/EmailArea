@@ -18,19 +18,21 @@ function emailArea(tao, sep) {
     ta.on('keypress', function(e) {
         // Look for comma, space, enter, semicolon as given in sep
         var char = String.fromCharCode(e.which);
-
-        if ($.inArray(char, sep) >= 0)
+        if ($.inArray(char, sep) >= 0) {
             process(ta.val());
+        }
     });
-    ta.on('paste', function(e) {
+
+    ta.on('paste', function() {
         var ctl = $(this);
         setTimeout(function() {
-            process(ctl.val())
+            process(ctl.val());
         }, 100);
     });
+
     //attach on focus for holder to ta
     eac.on('click', function() {
-        ta.focus()
+        ta.focus();
     });
 
     function process(str) {
@@ -42,17 +44,17 @@ function emailArea(tao, sep) {
         // For each item in array see if valid email and add tag if yes
         str.split(',').forEach(function(str) {
             if (isValidEmail(str)) { // If valid, check if already added
-                if ($.inArray(str, validEmails) < 0) // If not add a tag
+                if ($.inArray(str, validEmails) < 0) { // If not add a tag
                     addTag(str);
-                else { // If yes, add new and remove old
+                } else { // If yes, add new and remove old
                     removeTag(str);
                     addTag(str);
                 }
+            } else {  // Add to invalid emails array
+                if ($.inArray(str, invalidEmails) < 0) {
+                    invalidEmails.push(str);
+                }
             }
-            // Add to invalid emails array
-            else
-            if ($.inArray(str, invalidEmails) < 0)
-                invalidEmails.push(str);
         });
         // Set tao with good emails
         tao.val(validEmails.join(','));
@@ -61,6 +63,7 @@ function emailArea(tao, sep) {
         ta.val(invalidEmails.join(', '));
         invalidEmails = [];
     };
+
     // Resize ta
     function resizeTa() {
         ta.css('width', 50);
@@ -73,16 +76,18 @@ function emailArea(tao, sep) {
             scrollTop: eac[0].scrollHeight
         }, 1);
     };
+
     // Add tag
     function addTag(email) {
         validEmails.push(email);
         var i = $.inArray(email, validEmails);
         if (validEmails.length === 1) tc.css('display', 'inline');
         var btn = $('<div>x</div>').attr('class', cn + 'Btn').click(close);
-        var tag = $('<div id="tag' + i + '">').text(email).attr('class', cn + 'Tag').append(btn)
+        var tag = $('<div id="tag' + i + '">').text(email).attr('class', cn + 'Tag').append(btn);
         tc.append(tag);
         resizeTa();
     };
+
     // Remove tag
     function removeTag(email) {
         var i = $.inArray(email, validEmails);
@@ -91,11 +96,13 @@ function emailArea(tao, sep) {
         if (validEmails.length === 0) tc.css('display', 'none');
         resizeTa();
     };
+
     // Close tag
     function close() {
-        var t = $(this).parent();
-        removeTag(t.text().slice(0, -1), true);
+        var tag = $(this).parent();
+        removeTag(tag.text().slice(0, -1), true);
     }
+
     // Styles
     var cssTa = {
         cssText: 'background: transparent !important',
@@ -106,6 +113,7 @@ function emailArea(tao, sep) {
         border: 0,
         resize: 'none'
     };
+
     // Set styles
     // Copy styles from tao to eac
     eac.attr('class', tao.attr('class'));
