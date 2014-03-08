@@ -17,8 +17,8 @@ function emailArea(tao, sep) {
     // Attach after event handlers for keyup/press, paste
     ta.on('keypress', function(e) {
         // Look for comma, space, enter, semicolon as given in sep
-        var char = String.fromCharCode(e.which);
-        if ($.inArray(char, sep) >= 0) {
+        var chr = String.fromCharCode(e.which);
+        if ($.inArray(chr, sep) >= 0) {
             process(ta.val());
         }
     });
@@ -105,13 +105,13 @@ function emailArea(tao, sep) {
 
     // Styles
     var cssTa = {
-        cssText: 'background: transparent !important',
-        display: 'inline',
+        cssText : 'background: transparent !important',
+        display : 'inline',
+        outline : 0,
+        border  : 0,
+        resize  : 'none'
         '-webkit-box-shadow': 'none',
         'box-shadow': 'none',
-        outline: 0,
-        border: 0,
-        resize: 'none'
     };
 
     // Set styles
