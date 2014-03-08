@@ -18,6 +18,7 @@ function emailArea(tao, sep) {
     ta.on('keypress', function(e) {
         // Look for comma, space, enter, semicolon as given in sep
         var char = String.fromCharCode(e.which);
+
         if ($.inArray(char, sep) >= 0)
             process(ta.val());
     });

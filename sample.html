@@ -9,17 +9,16 @@
             font: 8pt calibri;
             background-color: whitesmoke;
             border: 1px solid silver;
-            width: 400px
+            width: 400px;
+            height: 200px;
         }
     </style>
 </head>
 <body>
     <textarea id="inputTA" name="inputTA" class="ta" rows="3" /></textarea>
-    <input type="Button" id="btn" value="Convert" />
     <script type="text/javascript">
-        $('#btn').click(function() {
+        $(function() {
             emailArea($('#inputTA'));
-            $(this).hide();
         });
     </script>
 </body>
